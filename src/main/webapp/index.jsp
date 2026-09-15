@@ -264,6 +264,104 @@
             letter-spacing: 1px;
         }
 
+        /* ========== CART DRAWER OVERLAY ========== */
+        .cart-drawer-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        .cart-drawer-backdrop.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        .cart-drawer {
+            position: fixed;
+            top: 0;
+            right: -420px;
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            background: #fff;
+            z-index: 1001;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+            transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        .cart-drawer.open {
+            right: 0;
+        }
+        .cart-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .cart-header h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+        }
+        .cart-body {
+            padding: 24px;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .cart-item {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--surface);
+        }
+        .cart-item img {
+            width: 70px;
+            height: 85px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+        }
+        .cart-item-info {
+            flex: 1;
+        }
+        .cart-item-info h5 {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .cart-item-info p {
+            font-size: 14px;
+            color: var(--muted);
+        }
+        .cart-item-remove {
+            color: var(--muted);
+            font-size: 14px;
+            transition: var(--transition);
+        }
+        .cart-item-remove:hover {
+            color: #d9534f;
+        }
+        .cart-footer {
+            padding: 24px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            background: var(--bg);
+        }
+        .cart-total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
         /* ========== HERO ========== */
         .hero {
             padding: 40px 0 80px;
@@ -276,7 +374,7 @@
             background: #f1ede4;
             border-radius: 24px;
             padding: 60px;
-            overflow: relative;
+            position: relative;
         }
         .hero-content .subtitle {
             font-size: 13px;
@@ -460,6 +558,9 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             transition: var(--transition);
         }
+        .product-card .wish-btn.active i {
+            color: #e63946;
+        }
         .product-card .wish-btn:hover {
             background: var(--gold);
             color: #fff;
@@ -615,7 +716,7 @@
             <nav class="main-nav">
                 <ul>
                     <li><a href="#" class="active">Collection</a></li>
-                    <li><a href="#">Objects</a></li>
+                    <li><a href="#shop">Objects</a></li>
                     <li><a href="#">Atelier</a></li>
                     <li><a href="#">Journal</a></li>
                 </ul>
@@ -624,9 +725,9 @@
             <div class="header-actions">
                 <div class="search-wrap">
                     <input type="text" placeholder="Search creations..." id="searchInput">
-                    <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <button id="searchSubmitBtn"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
-                <button class="icon-btn" aria-label="Wishlist"><i class="fa-regular fa-heart"></i></button>
+                <button class="icon-btn" aria-label="Wishlist" id="wishlistTrigger"><i class="fa-regular fa-heart"></i></button>
                 <div class="cart-wrap">
                     <button class="icon-btn" id="cartBtn" aria-label="Cart"><i class="fa-solid fa-bag-shopping"></i><span class="cart-count">2</span></button>
                 </div>
@@ -636,12 +737,47 @@
         <div id="mobileMenu">
             <ul>
                 <li><a href="#">Collection</a></li>
-                <li><a href="#">Objects</a></li>
+                <li><a href="#shop">Objects</a></li>
                 <li><a href="#">Atelier</a></li>
                 <li><a href="#">Journal</a></li>
             </ul>
         </div>
     </header>
+
+    <!-- Cart Slide-out Drawer -->
+    <div class="cart-drawer-backdrop" id="cartBackdrop"></div>
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-header">
+            <h3>Your Shopping Bag</h3>
+            <button class="icon-btn" id="closeCartBtn" style="width: 32px; height: 32px; font-size: 14px;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="cart-body" id="cartBody">
+            <!-- Dynamic Cart Items -->
+            <div class="cart-item" data-price="340">
+                <img src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=600&q=80" alt="Item">
+                <div class="cart-item-info">
+                    <h5>Kanso Terracotta Vessel</h5>
+                    <p>$340</p>
+                </div>
+                <button class="cart-item-remove"><i class="fa-regular fa-trash-can"></i></button>
+            </div>
+            <div class="cart-item" data-price="480">
+                <img src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=600&q=80" alt="Item">
+                <div class="cart-item-info">
+                    <h5>Aura Brushed Brass Lamp</h5>
+                    <p>$480</p>
+                </div>
+                <button class="cart-item-remove"><i class="fa-regular fa-trash-can"></i></button>
+            </div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total-row">
+                <span>Subtotal</span>
+                <span id="cartSubtotal">$820</span>
+            </div>
+            <a href="#" class="btn btn-primary" style="width: 100%;">Proceed to Checkout</a>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero container">
@@ -711,12 +847,12 @@
             </div>
             <a href="#" class="view-all">View Collection</a>
         </div>
-        <div class="products-grid">
+        <div class="products-grid" id="productsGrid">
             <!-- Product 1 -->
-            <div class="product-card">
+            <div class="product-card" data-title="Kanso Terracotta Vessel" data-price="340" data-img="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=600&q=80">
                 <div class="img-wrap">
                     <span class="badge">New</span>
-                    <button class="wish-btn"><i class="fa-regular fa-heart"></i></button>
+                    <button class="wish-btn" aria-label="Save to Wishlist"><i class="fa-regular fa-heart"></i></button>
                     <img src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=600&q=80" alt="Ceramic Vessel">
                 </div>
                 <div class="body">
@@ -731,9 +867,9 @@
                 </div>
             </div>
             <!-- Product 2 -->
-            <div class="product-card">
+            <div class="product-card" data-title="Linea Oak Lounge Chair" data-price="1250" data-img="https://images.unsplash.com/photo-1538688525198-9b88f6f53126?auto=format&fit=crop&w=600&q=80">
                 <div class="img-wrap">
-                    <button class="wish-btn"><i class="fa-regular fa-heart"></i></button>
+                    <button class="wish-btn" aria-label="Save to Wishlist"><i class="fa-regular fa-heart"></i></button>
                     <img src="https://images.unsplash.com/photo-1538688525198-9b88f6f53126?auto=format&fit=crop&w=600&q=80" alt="Minimal Chair">
                 </div>
                 <div class="body">
@@ -748,10 +884,10 @@
                 </div>
             </div>
             <!-- Product 3 -->
-            <div class="product-card">
+            <div class="product-card" data-title="Aura Brushed Brass Lamp" data-price="480" data-img="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=600&q=80">
                 <div class="img-wrap">
                     <span class="badge">Exclusive</span>
-                    <button class="wish-btn"><i class="fa-regular fa-heart"></i></button>
+                    <button class="wish-btn" aria-label="Save to Wishlist"><i class="fa-regular fa-heart"></i></button>
                     <img src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=600&q=80" alt="Brass Lamp">
                 </div>
                 <div class="body">
@@ -766,9 +902,9 @@
                 </div>
             </div>
             <!-- Product 4 -->
-            <div class="product-card">
+            <div class="product-card" data-title="Merino Wool Throw Blanket" data-price="290" data-img="https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=600&q=80">
                 <div class="img-wrap">
-                    <button class="wish-btn"><i class="fa-regular fa-heart"></i></button>
+                    <button class="wish-btn" aria-label="Save to Wishlist"><i class="fa-regular fa-heart"></i></button>
                     <img src="https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=600&q=80" alt="Wool Throw">
                 </div>
                 <div class="body">
@@ -842,29 +978,79 @@
         </div>
     </footer>
 
-    <!-- Basic Interactive Script -->
+    <!-- Interactive Script -->
     <script>
         // Toggle mobile drawer navigation
         const mobileToggle = document.getElementById('mobileToggle');
         const mobileMenu = document.getElementById('mobileMenu');
         
         mobileToggle.addEventListener('click', () => {
-            if(mobileMenu.style.display === 'block') {
-                mobileMenu.style.display = 'none';
-            } else {
-                mobileMenu.style.display = 'block';
+            mobileMenu.style.display = mobileMenu.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Cart Drawer Elements
+        const cartBtn = document.getElementById('cartBtn');
+        const cartDrawer = document.getElementById('cartDrawer');
+        const cartBackdrop = document.getElementById('cartBackdrop');
+        const closeCartBtn = document.getElementById('closeCartBtn');
+        const cartBody = document.getElementById('cartBody');
+        const cartCount = document.querySelector('.cart-count');
+        const cartSubtotal = document.getElementById('cartSubtotal');
+
+        function toggleCart(open) {
+            cartDrawer.classList.toggle('open', open);
+            cartBackdrop.classList.toggle('open', open);
+        }
+
+        cartBtn.addEventListener('click', () => toggleCart(true));
+        closeCartBtn.addEventListener('click', () => toggleCart(false));
+        cartBackdrop.addEventListener('click', () => toggleCart(false));
+
+        // Update Subtotal Calculation & Badges
+        function updateCartTotals() {
+            const items = cartBody.querySelectorAll('.cart-item');
+            let total = 0;
+            items.forEach(item => {
+                total += parseFloat(item.dataset.price);
+            });
+            cartSubtotal.textContent = `$${total.toLocaleString()}`;
+            cartCount.textContent = items.length;
+        }
+
+        // Remove item from cart behavior
+        cartBody.addEventListener('click', (e) => {
+            const removeBtn = e.target.closest('.cart-item-remove');
+            if (removeBtn) {
+                removeBtn.closest('.cart-item').remove();
+                updateCartTotals();
             }
         });
 
-        // Add to bag feedback simulation
+        // Add to bag functionality
         const addButtons = document.querySelectorAll('.add-btn');
-        const cartCount = document.querySelector('.cart-count');
-        let count = 2;
-
         addButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                count++;
-                cartCount.textContent = count;
+                const card = e.target.closest('.product-card');
+                const title = card.dataset.title;
+                const price = card.dataset.price;
+                const img = card.dataset.img;
+
+                // Append item into slideout cart container
+                const newItem = document.createElement('div');
+                newItem.className = 'cart-item';
+                newItem.dataset.price = price;
+                newItem.innerHTML = `
+                    <img src="${img}" alt="${title}">
+                    <div class="cart-item-info">
+                        <h5>${title}</h5>
+                        <p>$${parseInt(price).toLocaleString()}</p>
+                    </div>
+                    <button class="cart-item-remove"><i class="fa-regular fa-trash-can"></i></button>
+                `;
+                cartBody.appendChild(newItem);
+                updateCartTotals();
+
+                // Button State feedback
                 const originalText = btn.textContent;
                 btn.textContent = 'Added';
                 btn.style.background = 'var(--gold)';
@@ -874,7 +1060,50 @@
                     btn.style.background = '';
                     btn.style.color = '';
                 }, 1500);
+
+                // Open cart drawer automatically on new addition
+                toggleCart(true);
             });
+        });
+
+        // Wishlist Toggle Interaction
+        const wishButtons = document.querySelectorAll('.wish-btn');
+        wishButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.classList.toggle('active');
+                const icon = btn.querySelector('i');
+                if (btn.classList.contains('active')) {
+                    icon.classList.remove('fa-regular');
+                    icon.classList.add('fa-solid');
+                } else {
+                    icon.classList.remove('fa-solid');
+                    icon.classList.add('fa-regular');
+                }
+            });
+        });
+
+        // Live Product Search Filter Interaction
+        const searchInput = document.getElementById('searchInput');
+        const searchSubmitBtn = document.getElementById('searchSubmitBtn');
+        const productCards = document.querySelectorAll('.product-card');
+
+        function filterProducts() {
+            const query = searchInput.value.toLowerCase().trim();
+            productCards.forEach(card => {
+                const title = card.dataset.title.toLowerCase();
+                if (title.includes(query)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        searchInput.addEventListener('input', filterProducts);
+        searchSubmitBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            filterProducts();
+            document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
         });
     </script>
 </body>
