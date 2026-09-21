@@ -725,13 +725,13 @@
             <div class="header-actions">
                 <div class="search-wrap">
                     <input type="text" placeholder="Search creations..." id="searchInput">
-                    <button id="searchSubmitBtn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <button id="searchSubmitBtn"><em class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
-                <button class="icon-btn" aria-label="Wishlist" id="wishlistTrigger"><i class="fa-regular fa-heart"></i></button>
+                <button class="icon-btn" aria-label="Wishlist" id="wishlistTrigger"><em class="fa-regular fa-heart"></i></button>
                 <div class="cart-wrap">
-                    <button class="icon-btn" id="cartBtn" aria-label="Cart"><i class="fa-solid fa-bag-shopping"></i><span class="cart-count">2</span></button>
+                    <button class="icon-btn" id="cartBtn" aria-label="Cart"><em class="fa-solid fa-bag-shopping"></i><span class="cart-count">2</span></button>
                 </div>
-                <button class="mobile-toggle" id="mobileToggle" aria-label="Open Menu"><i class="fa-solid fa-bars"></i></button>
+                <button class="mobile-toggle" id="mobileToggle" aria-label="Open Menu"><em class="fa-solid fa-bars"></i></button>
             </div>
         </div>
         <div id="mobileMenu">
@@ -749,7 +749,7 @@
     <div class="cart-drawer" id="cartDrawer">
         <div class="cart-header">
             <h3>Your Shopping Bag</h3>
-            <button class="icon-btn" id="closeCartBtn" style="width: 32px; height: 32px; font-size: 14px;"><i class="fa-solid fa-xmark"></i></button>
+            <button class="icon-btn" id="closeCartBtn" style="width: 32px; height: 32px; font-size: 14px;"><em class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="cart-body" id="cartBody">
             <!-- Dynamic Cart Items -->
